@@ -217,6 +217,38 @@ def gen_command(message):
         except Exception as e:
             print(f"randomuser.me failed: {e}")
 
+        #async def generate_fake_address(country_code):
+    async with aiohttp.ClientSession() as session:
+        # Try randomuser.me first
+        try:
+            url1 = "https://randomuser.me/api/"
+            async with session.get(url1, timeout=10) as response:
+                if response.status == 200:
+                    data = await response.json()
+                    result = data['results'][0]
+
+                    full_name = f"{result['name']['first']} {result['name']['last']}"
+                    street = result['location']['street']
+                    street_address = f"{street['number']} {street['name']}"
+                    city = result['location']['city']
+                    state = result['location']['state']
+                    postal_code = result['location']['postcode']
+                    phone_number = result['phone']
+                    country = result['location']['country']
+
+                    return {
+                        "full_name": full_name,
+                        "street_address": street_address,
+                        "city": city,
+                        "state": state,
+                        "postal_code": postal_code,
+                        "phone_number": phone_number,
+                        "country": country
+                    }
+
+        except Exception as e:
+            print(f"randomuser.me failed: {e}")
+
         # Fallback to fakerapi.it
         try:
             url2 = "https://fakerapi.it/api/v1/persons?_locale=en_US&_quantity=1"
@@ -239,17 +271,6 @@ def gen_command(message):
 
         except Exception as e:
             return {"error": f"Both APIs failed: {e}"}
-            
-
-            return {
-                "full_name": full_name,
-                "street_address": street_address,
-                "city": city,
-                "state": state,
-                "postal_code": postal_code,
-                "phone_number": phone_number,
-                "country": country
-            }
 
 @bot.message_handler(func=lambda message: message.text.startswith(("/fake", ".fake")))
 def fake_command(message):
