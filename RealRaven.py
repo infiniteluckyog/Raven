@@ -185,26 +185,61 @@ def gen_command(message):
 
     threading.Thread(target=run_async).start()
 
-    
-
-async def generate_fake_address(country_code):
-    url = "https://randomuser.me/api/"
+    async def generate_fake_address(country_code):
     async with aiohttp.ClientSession() as session:
-        async with session.get(url, timeout=10) as response:
-            print(f"FAKE API STATUS: {response.status}")
-            if response.status != 200:
-                raise Exception(f"Failed to fetch fake address. Status: {response.status}")
-            data = await response.json()
-            ...
+        # Try randomuser.me first
+        try:
+            url1 = "https://randomuser.me/api/"
+            async with session.get(url1, timeout=10) as response:
+                if response.status == 200:
+                    data = await response.json()
+                    result = data['results'][0]
 
-            full_name = f"{result['name']['first']} {result['name']['last']}"
-            street = result['location']['street']
-            street_address = f"{street['number']} {street['name']}"
-            city = result['location']['city']
-            state = result['location']['state']
-            postal_code = result['location']['postcode']
-            phone_number = result['phone']
-            country = result['location']['country']
+                    full_name = f"{result['name']['first']} {result['name']['last']}"
+                    street = result['location']['street']
+                    street_address = f"{street['number']} {street['name']}"
+                    city = result['location']['city']
+                    state = result['location']['state']
+                    postal_code = result['location']['postcode']
+                    phone_number = result['phone']
+                    country = result['location']['country']
+
+                    return {
+                        "full_name": full_name,
+                        "street_address": street_address,
+                        "city": city,
+                        "state": state,
+                        "postal_code": postal_code,
+                        "phone_number": phone_number,
+                        "country": country
+                    }
+
+        except Exception as e:
+            print(f"randomuser.me failed: {e}")
+
+        # Fallback to fakerapi.it
+        try:
+            url2 = "https://fakerapi.it/api/v1/persons?_locale=en_US&_quantity=1"
+            async with session.get(url2, timeout=10) as response:
+                if response.status != 200:
+                    raise Exception(f"Fallback also failed. Status: {response.status}")
+
+                data = await response.json()
+                result = data['data'][0]
+
+                return {
+                    "full_name": f"{result['firstname']} {result['lastname']}",
+                    "street_address": result['address'],
+                    "city": result['city'],
+                    "state": result['state'],
+                    "postal_code": result['zipcode'],
+                    "phone_number": result['phone'],
+                    "country": "United States"
+                }
+
+        except Exception as e:
+            return {"error": f"Both APIs failed: {e}"}
+            
 
             return {
                 "full_name": full_name,
@@ -215,17 +250,6 @@ async def generate_fake_address(country_code):
                 "phone_number": phone_number,
                 "country": country
             }
-
-
-    return {
-        "full_name": f"{first_name} {last_name}",
-        "street_address": street_address,
-        "city": city,
-        "state": state,
-        "postal_code": postal_code,
-        "phone_number": phone_number,
-        "country": country
-    }
 
 @bot.message_handler(func=lambda message: message.text.startswith(("/fake", ".fake")))
 def fake_command(message):
