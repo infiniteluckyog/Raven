@@ -188,7 +188,7 @@ def gen_command(message):
     
 
 async def generate_fake_address(country_code):
-    url = f"https://randomuser.me/api/?nat={country_code}"
+    url = f"https://randomuser.me/api/"
     async with aiohttp.ClientSession() as session:
         async with session.get(url, timeout=10) as response:
             if response.status != 200:
