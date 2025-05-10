@@ -1,0 +1,54 @@
+us:United States
+ca:Canada
+uk:United Kingdom
+au:Australia
+de:Germany
+fr:France
+es:Spain
+it:Italy
+jp:Japan
+br:Brazil
+mx:Mexico
+in:India
+cn:China
+ru:Russia
+za:South Africa
+nl:Netherlands
+se:Sweden
+ch:Switzerland
+be:Belgium
+dk:Denmark
+no:Norway
+pl:Poland
+pt:Portugal
+sg:Singapore
+kr:South Korea
+tr:Turkey
+ar:Argentina
+cz:Czech Republic
+gr:Greece
+hu:Hungary
+ie:Ireland
+il:Israel
+nz:New Zealand
+ph:Philippines
+ro:Romania
+th:Thailand
+ua:Ukraine
+ve:Venezuela
+vn:Vietnam
+at:Austria
+bg:Bulgaria
+hr:Croatia
+cy:Cyprus
+ee:Estonia
+fi:Finland
+lt:Lithuania
+lv:Latvia
+mt:Malta
+sk:Slovakia
+si:Slovenia
+hr:Croatia
+ro:Romania
+rs:Serbia
+al:Albania

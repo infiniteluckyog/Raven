@@ -1,0 +1,690 @@
+{
+  "AF": [
+    "AFGHANISTAN",
+    "🇦🇫"
+  ],
+  "AL": [
+    "ALBANIA",
+    "🇦🇱"
+  ],
+  "DZ": [
+    "ALGERIA",
+    "🇩🇿"
+  ],
+  "AS": [
+    "AMERICAN SAMOA",
+    "🇦🇸"
+  ],
+  "AD": [
+    "ANDORRA",
+    "🇦🇩"
+  ],
+  "AO": [
+    "ANGOLA",
+    "🇦🇴"
+  ],
+  "AI": [
+    "ANGUILLA",
+    "🇦🇮"
+  ],
+  "AQ": [
+    "ANTARCTICA",
+    "🇦🇶"
+  ],
+  "AG": [
+    "ANTIGUA AND BARBUDA",
+    "🇦🇬"
+  ],
+  "AR": [
+    "ARGENTINA",
+    "🇦🇷"
+  ],
+  "AM": [
+    "ARMENIA",
+    "🇦🇲"
+  ],
+  "AW": [
+    "ARUBA",
+    "🇦🇼"
+  ],
+  "AU": [
+    "AUSTRALIA",
+    "🇦🇺"
+  ],
+  "AT": [
+    "AUSTRIA",
+    "🇦🇹"
+  ],
+  "AZ": [
+    "AZERBAIJAN",
+    "🇦🇿"
+  ],
+  "BS": [
+    "BAHAMAS",
+    "🇧🇸"
+  ],
+  "BH": [
+    "BAHRAIN",
+    "🇧🇭"
+  ],
+  "BD": [
+    "BANGLADESH",
+    "🇧🇩"
+  ],
+  "BB": [
+    "BARBADOS",
+    "🇧🇧"
+  ],
+  "BY": [
+    "BELARUS",
+    "🇧🇾"
+  ],
+  "BE": [
+    "BELGIUM",
+    "🇧🇪"
+  ],
+  "BZ": [
+    "BELIZE",
+    "🇧🇿"
+  ],
+  "BJ": [
+    "BENIN",
+    "🇧🇯"
+  ],
+  "BM": [
+    "BERMUDA",
+    "🇧🇲"
+  ],
+  "BT": [
+    "BHUTAN",
+    "🇧🇹"
+  ],
+  "BO": [
+    "BOLIVIA",
+    "🇧🇴"
+  ],
+  "BA": [
+    "BOSNIA AND HERZEGOVINA",
+    "🇧🇦"
+  ],
+  "BW": [
+    "BOTSWANA",
+    "🇧🇼"
+  ],
+  "BR": [
+    "BRAZIL",
+    "🇧🇷"
+  ],
+  "BN": [
+    "BRUNEI",
+    "🇧🇳"
+  ],
+  "BG": [
+    "BULGARIA",
+    "🇧🇬"
+  ],
+  "BF": [
+    "BURKINA FASO",
+    "🇧🇫"
+  ],
+  "BI": [
+    "BURUNDI",
+    "🇧🇮"
+  ],
+  "KH": [
+    "CAMBODIA",
+    "🇰🇭"
+  ],
+  "CM": [
+    "CAMEROON",
+    "🇨🇲"
+  ],
+  "CA": [
+    "CANADA",
+    "🇨🇦"
+  ],
+  "CV": [
+    "CAPE VERDE",
+    "🇨🇻"
+  ],
+  "CF": [
+    "CENTRAL AFRICAN REPUBLIC",
+    "🇨🇫"
+  ],
+  "TD": [
+    "CHAD",
+    "🇹🇩"
+  ],
+  "CL": [
+    "CHILE",
+    "🇨🇱"
+  ],
+  "CN": [
+    "CHINA",
+    "🇨🇳"
+  ],
+  "CO": [
+    "COLOMBIA",
+    "🇨🇴"
+  ],
+  "KM": [
+    "COMOROS",
+    "🇰🇲"
+  ],
+  "CG": [
+    "CONGO",
+    "🇨🇬"
+  ],
+  "CD": [
+    "CONGO (DRC)",
+    "🇨🇩"
+  ],
+  "CR": [
+    "COSTA RICA",
+    "🇨🇷"
+  ],
+  "HR": [
+    "CROATIA",
+    "🇭🇷"
+  ],
+  "CU": [
+    "CUBA",
+    "🇨🇺"
+  ],
+  "CY": [
+    "CYPRUS",
+    "🇨🇾"
+  ],
+  "CZ": [
+    "CZECH REPUBLIC",
+    "🇨🇿"
+  ],
+  "DK": [
+    "DENMARK",
+    "🇩🇰"
+  ],
+  "DJ": [
+    "DJIBOUTI",
+    "🇩🇯"
+  ],
+  "DM": [
+    "DOMINICA",
+    "🇩🇲"
+  ],
+  "DO": [
+    "DOMINICAN REPUBLIC",
+    "🇩🇴"
+  ],
+  "EC": [
+    "ECUADOR",
+    "🇪🇨"
+  ],
+  "EG": [
+    "EGYPT",
+    "🇪🇬"
+  ],
+  "SV": [
+    "EL SALVADOR",
+    "🇸🇻"
+  ],
+  "GQ": [
+    "EQUATORIAL GUINEA",
+    "🇬🇶"
+  ],
+  "ER": [
+    "ERITREA",
+    "🇪🇷"
+  ],
+  "EE": [
+    "ESTONIA",
+    "🇪🇪"
+  ],
+  "ET": [
+    "ETHIOPIA",
+    "🇪🇹"
+  ],
+  "FJ": [
+    "FIJI",
+    "🇫🇯"
+  ],
+  "FI": [
+    "FINLAND",
+    "🇫🇮"
+  ],
+  "FR": [
+    "FRANCE",
+    "🇫🇷"
+  ],
+  "GA": [
+    "GABON",
+    "🇬🇦"
+  ],
+  "GM": [
+    "GAMBIA",
+    "🇬🇲"
+  ],
+  "GE": [
+    "GEORGIA",
+    "🇬🇪"
+  ],
+  "DE": [
+    "GERMANY",
+    "🇩🇪"
+  ],
+  "GH": [
+    "GHANA",
+    "🇬🇭"
+  ],
+  "GR": [
+    "GREECE",
+    "🇬🇷"
+  ],
+  "GD": [
+    "GRENADA",
+    "🇬🇩"
+  ],
+  "GT": [
+    "GUATEMALA",
+    "🇬🇹"
+  ],
+  "GN": [
+    "GUINEA",
+    "🇬🇳"
+  ],
+  "GW": [
+    "GUINEA-BISSAU",
+    "🇬🇼"
+  ],
+  "GY": [
+    "GUYANA",
+    "🇬🇾"
+  ],
+  "HT": [
+    "HAITI",
+    "🇭🇹"
+  ],
+  "HN": [
+    "HONDURAS",
+    "🇭🇳"
+  ],
+  "HU": [
+    "HUNGARY",
+    "🇭🇺"
+  ],
+  "IS": [
+    "ICELAND",
+    "🇮🇸"
+  ],
+  "IN": [
+    "INDIA",
+    "🇮🇳"
+  ],
+  "ID": [
+    "INDONESIA",
+    "🇮🇩"
+  ],
+  "IR": [
+    "IRAN",
+    "🇮🇷"
+  ],
+  "IQ": [
+    "IRAQ",
+    "🇮🇶"
+  ],
+  "IE": [
+    "IRELAND",
+    "🇮🇪"
+  ],
+  "IL": [
+    "ISRAEL",
+    "🇮🇱"
+  ],
+  "IT": [
+    "ITALY",
+    "🇮🇹"
+  ],
+  "JM": [
+    "JAMAICA",
+    "🇯🇲"
+  ],
+  "JP": [
+    "JAPAN",
+    "🇯🇵"
+  ],
+  "JO": [
+    "JORDAN",
+    "🇯🇴"
+  ],
+  "KZ": [
+    "KAZAKHSTAN",
+    "🇰🇿"
+  ],
+  "KE": [
+    "KENYA",
+    "🇰🇪"
+  ],
+  "KI": [
+    "KIRIBATI",
+    "🇰🇮"
+  ],
+  "KP": [
+    "NORTH KOREA",
+    "🇰🇵"
+  ],
+  "KR": [
+    "SOUTH KOREA",
+    "🇰🇷"
+  ],
+  "KW": [
+    "KUWAIT",
+    "🇰🇼"
+  ],
+  "KG": [
+    "KYRGYZSTAN",
+    "🇰🇬"
+  ],
+  "LA": [
+    "LAOS",
+    "🇱🇦"
+  ],
+  "LV": [
+    "LATVIA",
+    "🇱🇻"
+  ],
+  "LB": [
+    "LEBANON",
+    "🇱🇧"
+  ],
+  "LS": [
+    "LESOTHO",
+    "🇱🇸"
+  ],
+  "LR": [
+    "LIBERIA",
+    "🇱🇷"
+  ],
+  "LY": [
+    "LIBYA",
+    "🇱🇾"
+  ],
+  "LI": [
+    "LIECHTENSTEIN",
+    "🇱🇮"
+  ],
+  "LT": [
+    "LITHUANIA",
+    "🇱🇹"
+  ],
+  "LU": [
+    "LUXEMBOURG",
+    "🇱🇺"
+  ],
+  "MG": [
+    "MADAGASCAR",
+    "🇲🇬"
+  ],
+  "MW": [
+    "MALAWI",
+    "🇲🇼"
+  ],
+  "MY": [
+    "MALAYSIA",
+    "🇲🇾"
+  ],
+  "MV": [
+    "MALDIVES",
+    "🇲🇻"
+  ],
+  "ML": [
+    "MALI",
+    "🇲🇱"
+  ],
+  "MT": [
+    "MALTA",
+    "🇲🇹"
+  ],
+  "MH": [
+    "MARSHALL ISLANDS",
+    "🇲🇭"
+  ],
+  "MR": [
+    "MAURITANIA",
+    "🇲🇷"
+  ],
+  "MU": [
+    "MAURITIUS",
+    "🇲🇺"
+  ],
+  "MX": [
+    "MEXICO",
+    "🇲🇽"
+  ],
+  "MD": [
+    "MOLDOVA",
+    "🇲🇩"
+  ],
+  "MC": [
+    "MONACO",
+    "🇲🇨"
+  ],
+  "MN": [
+    "MONGOLIA",
+    "🇲🇳"
+  ],
+  "ME": [
+    "MONTENEGRO",
+    "🇲🇪"
+  ],
+  "MA": [
+    "MOROCCO",
+    "🇲🇦"
+  ],
+  "MZ": [
+    "MOZAMBIQUE",
+    "🇲🇿"
+  ],
+  "MM": [
+    "MYANMAR",
+    "🇲🇲"
+  ],
+  "NA": [
+    "NAMIBIA",
+    "🇳🇦"
+  ],
+  "NP": [
+    "NEPAL",
+    "🇳🇵"
+  ],
+  "NL": [
+    "NETHERLANDS",
+    "🇳🇱"
+  ],
+  "NZ": [
+    "NEW ZEALAND",
+    "🇳🇿"
+  ],
+  "NI": [
+    "NICARAGUA",
+    "🇳🇮"
+  ],
+  "NE": [
+    "NIGER",
+    "🇳🇪"
+  ],
+  "NG": [
+    "NIGERIA",
+    "🇳🇬"
+  ],
+  "NO": [
+    "NORWAY",
+    "🇳🇴"
+  ],
+  "OM": [
+    "OMAN",
+    "🇴🇲"
+  ],
+  "PK": [
+    "PAKISTAN",
+    "🇵🇰"
+  ],
+  "PA": [
+    "PANAMA",
+    "🇵🇦"
+  ],
+  "PG": [
+    "PAPUA NEW GUINEA",
+    "🇵🇬"
+  ],
+  "PY": [
+    "PARAGUAY",
+    "🇵🇾"
+  ],
+  "PE": [
+    "PERU",
+    "🇵🇪"
+  ],
+  "PH": [
+    "PHILIPPINES",
+    "🇵🇭"
+  ],
+  "PL": [
+    "POLAND",
+    "🇵🇱"
+  ],
+  "PT": [
+    "PORTUGAL",
+    "🇵🇹"
+  ],
+  "QA": [
+    "QATAR",
+    "🇶🇦"
+  ],
+  "RO": [
+    "ROMANIA",
+    "🇷🇴"
+  ],
+  "RU": [
+    "RUSSIA",
+    "🇷🇺"
+  ],
+  "RW": [
+    "RWANDA",
+    "🇷🇼"
+  ],
+  "SA": [
+    "SAUDI ARABIA",
+    "🇸🇦"
+  ],
+  "SN": [
+    "SENEGAL",
+    "🇸🇳"
+  ],
+  "RS": [
+    "SERBIA",
+    "🇷🇸"
+  ],
+  "SG": [
+    "SINGAPORE",
+    "🇸🇬"
+  ],
+  "SK": [
+    "SLOVAKIA",
+    "🇸🇰"
+  ],
+  "SI": [
+    "SLOVENIA",
+    "🇸🇮"
+  ],
+  "ZA": [
+    "SOUTH AFRICA",
+    "🇿🇦"
+  ],
+  "ES": [
+    "SPAIN",
+    "🇪🇸"
+  ],
+  "LK": [
+    "SRI LANKA",
+    "🇱🇰"
+  ],
+  "SE": [
+    "SWEDEN",
+    "🇸🇪"
+  ],
+  "CH": [
+    "SWITZERLAND",
+    "🇨🇭"
+  ],
+  "SY": [
+    "SYRIA",
+    "🇸🇾"
+  ],
+  "TW": [
+    "TAIWAN",
+    "🇹🇼"
+  ],
+  "TJ": [
+    "TAJIKISTAN",
+    "🇹🇯"
+  ],
+  "TZ": [
+    "TANZANIA",
+    "🇹🇿"
+  ],
+  "TH": [
+    "THAILAND",
+    "🇹🇭"
+  ],
+  "TR": [
+    "TURKEY",
+    "🇹🇷"
+  ],
+  "UG": [
+    "UGANDA",
+    "🇺🇬"
+  ],
+  "UA": [
+    "UKRAINE",
+    "🇺🇦"
+  ],
+  "AE": [
+    "UNITED ARAB EMIRATES",
+    "🇦🇪"
+  ],
+  "GB": [
+    "UNITED KINGDOM",
+    "🇬🇧"
+  ],
+  "US": [
+    "UNITED STATES",
+    "🇺🇸"
+  ],
+  "UY": [
+    "URUGUAY",
+    "🇺🇾"
+  ],
+  "UZ": [
+    "UZBEKISTAN",
+    "🇺🇿"
+  ],
+  "VE": [
+    "VENEZUELA",
+    "🇻🇪"
+  ],
+  "VN": [
+    "VIETNAM",
+    "🇻🇳"
+  ],
+  "YE": [
+    "YEMEN",
+    "🇾🇪"
+  ],
+  "ZM": [
+    "ZAMBIA",
+    "🇿🇲"
+  ],
+  "ZW": [
+    "ZIMBABWE",
+    "🇿🇼"
+  ]
+}
