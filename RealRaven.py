@@ -188,13 +188,14 @@ def gen_command(message):
     
 
 async def generate_fake_address(country_code):
-    url = f"https://randomuser.me/api/"
+    url = "https://randomuser.me/api/"
     async with aiohttp.ClientSession() as session:
         async with session.get(url, timeout=10) as response:
+            print(f"FAKE API STATUS: {response.status}")
             if response.status != 200:
-                raise Exception("Failed to fetch fake address.")
+                raise Exception(f"Failed to fetch fake address. Status: {response.status}")
             data = await response.json()
-            result = data['results'][0]
+            ...
 
             full_name = f"{result['name']['first']} {result['name']['last']}"
             street = result['location']['street']
