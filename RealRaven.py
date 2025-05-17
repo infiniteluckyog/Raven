@@ -430,7 +430,7 @@ def universal_chk_command(message):
                 "cc": cc,
                 "proxy": "PP_1D1E5YMPFG-country-US:5vl30ay0@evo-pro.porterproxies.com:61236"
             }
-            async with httpx.AsyncClient(proxy=proxy, timeout=15) as client:
+            async with httpx.AsyncClient(proxies=proxy, timeout=15) as client:
                 r = await client.get(url, params=params)
                 try:
                     return r.json()
