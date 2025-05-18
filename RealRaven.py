@@ -6,6 +6,8 @@ import re
 import threading
 import json
 import random
+import requests.exceptions
+import os
 
 # Update the bot token
 BOT_TOKEN = "7294739772:AAHRDxPnLz57Jacnejn_AVrqKMT3kbJSbIo"
@@ -477,11 +479,102 @@ def start_command(message):
         "/bin :- 𝐁𝐢𝐧 𝐋𝐨𝐨𝐤𝐮𝐩\n"
         "/gen :- 𝐆𝐞𝐧𝐞𝐫𝐚𝐭𝐞 𝐂𝐂\n"
         "/vbv :- 𝐒𝐢𝐧𝐠𝐥𝐞 𝐕𝐁𝐕\n"
-
+        "/ss :- 𝐓𝐚𝐤𝐞 𝐒𝐜𝐫𝐞𝐞𝐧𝐬𝐡𝐨𝐭\n
         "/chk :- 𝐒𝐭𝐫𝐢𝐩𝐞 𝐀𝐮𝐭𝐡\n\n"
         "Bᴏᴛ Bʏ @Newlester "
     )
     bot.reply_to(message, welcome_message, parse_mode="HTML")
+
+import os
+import threading
+import requests
+import requests.exceptions
+from telebot.apihelper import ApiTelegramException
+
+@bot.message_handler(func=lambda m: m.text and (m.text.startswith("/ss") or m.text.startswith(".ss")))
+def screenshot_command(message):
+    try:
+        args = message.text.split(maxsplit=1)
+        if len(args) < 2:
+            bot.reply_to(message, "Usage: /ss <url>")
+            return
+        input_url = args[1].strip()
+        if not input_url.startswith('http://') and not input_url.startswith('https://'):
+            url = 'https://' + input_url
+        else:
+            url = input_url
+
+        info_msg = bot.reply_to(message, "Taking screenshot...")
+
+        api_url = f"https://image.thum.io/get/width/1280/crop/700/noanimate/{url}"
+        headers = {
+            "User-Agent": "Mozilla/5.0 (compatible; TelegramBot/1.0)"
+        }
+        resp = requests.get(api_url, headers=headers, timeout=10)
+
+        if resp.status_code == 200 and resp.headers.get("Content-Type", "").startswith("image"):
+            with open("ss.png", "wb") as f:
+                f.write(resp.content)
+
+            caption = f"Screenshot Successful ✅\nURL: <code>{url}</code>"
+            with open("ss.png", "rb") as photo:
+                sent_msg = bot.send_photo(message.chat.id, photo, caption=caption, parse_mode="HTML")
+
+            try:
+                bot.delete_message(chat_id=message.chat.id, message_id=info_msg.message_id)
+            except ApiTelegramException:
+                pass
+
+            quote_msg = bot.send_message(message.chat.id, "Deleting in 15 Seconds, Save it", reply_to_message_id=sent_msg.message_id)
+
+            if os.path.exists("ss.png"):
+                try:
+                    os.remove("ss.png")
+                except Exception:
+                    pass
+
+            def delayed_delete():
+                try:
+                    bot.delete_message(chat_id=message.chat.id, message_id=sent_msg.message_id)
+                except ApiTelegramException:
+                    pass
+                try:
+                    bot.delete_message(chat_id=message.chat.id, message_id=quote_msg.message_id)
+                except ApiTelegramException:
+                    pass
+
+            threading.Timer(15, delayed_delete).start()
+
+        else:
+            try:
+                bot.edit_message_text("Screenshot API Error! Try a different site or check URL.",
+                                      chat_id=message.chat.id,
+                                      message_id=info_msg.message_id)
+            except ApiTelegramException:
+                pass
+
+    except requests.exceptions.Timeout:
+        try:
+            bot.edit_message_text("Timeout Error: The screenshot service took too long to respond. Please try again later.",
+                                  chat_id=message.chat.id,
+                                  message_id=info_msg.message_id)
+        except ApiTelegramException:
+            pass
+    except requests.exceptions.RequestException:
+        try:
+            bot.edit_message_text("Network Error: Could not reach the screenshot service. Please check your connection or try again later.",
+                                  chat_id=message.chat.id,
+                                  message_id=info_msg.message_id)
+        except ApiTelegramException:
+            pass
+    except Exception:
+        try:
+            bot.edit_message_text("An unexpected error occurred while taking the screenshot.",
+                                  chat_id=message.chat.id,
+                                  message_id=info_msg.message_id)
+        except ApiTelegramException:
+            pass
+
 
 if __name__ == "__main__":
     print("BOT IS RUNNING...")
@@ -493,4 +586,3 @@ if __name__ == "__main__":
         except Exception as e:
             print(f"BOT POLLING ERROR: {e}")
             time.sleep(3)
-    
