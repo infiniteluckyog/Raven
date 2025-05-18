@@ -349,60 +349,75 @@ def get_country_name_and_flag(country_code):
 
 import time
 
-@bot.message_handler(func=lambda message: any(message.text.startswith(prefix) for prefix in ["/vbv", ".vbv"]))
-def universal_vbv_command(message):
-    import threading
+@bot.message_handler(func=lambda message: message.text.startswith(("/vbv", ".vbv")))
+def vbv_command(message):
+
+    command_parts = message.text.split(' ', 1)
+    if len(command_parts) < 2:
+        bot.reply_to(message, "❌ PLEASE PROVIDE A CREDIT CARD.")
+        return
+
+    cc = command_parts[1].strip()
+    bin_number = cc.split('|')[0][:6]  # Get the BIN (first 6 digits)
 
     def run_async():
         async def async_vbv():
-            try:
-                # Try to extract from message text after command
-                text = message.text.split(maxsplit=1)[1] if len(message.text.split(maxsplit=1)) > 1 else ""
-                cc = extract_cc_from_text(text)
-                # Or from replied message
-                if not cc and message.reply_to_message and message.reply_to_message.text:
-                    cc = extract_cc_from_text(message.reply_to_message.text)
-                if not cc:
-                    bot.reply_to(message, "❌ Could not find a valid card.")
-                    return
+            start_time = time.time()  # Record start time
 
-                bin_number = cc.split('|')[0][:6]
-                start_time = time.time()
-                result = await check_vbv(cc)
+            try:
+                result = await check_vbv(cc)  # Check the VBV status for the card
                 if "error" in result:
                     bot.reply_to(message, f"❌ {result['error']}")
                     return
+                    
+                    # Fetch the bin info using the lookup_bin function
                 bin_info = await lookup_bin(bin_number)
+
+                # Extract the necessary data
                 vbv_status = result.get("vbv_status", "N/A")
+                gateway = result.get("scheme", "N/A")
                 card_type = result.get("type", "N/A")
                 bank = result.get("bank", "N/A")
+                country_code = result.get("country", "N/A")
+
+               # Get full country name and flag using the BIN Lookup API
                 country_name = bin_info.get("country", "N/A")
                 country_flag = bin_info.get("flag", "🏳️")
 
+                   # Generate response based on VBV status
                 if vbv_status == "authenticate_successful":
                     verdict = "𝗣𝗮𝘀𝘀𝗲𝗱 ✅"
                 elif vbv_status == "authenticate_failed":
                     verdict = "𝗥𝗲𝗷𝗲𝗰𝘁𝗲𝗱 ❌"
                 else:
                     verdict = "𝗥𝗲𝗷𝗲𝗰𝘁𝗲𝗱 ❌"
-                elapsed = round(time.time() - start_time, 2)
+                    
+                # Calculate the time taken
+                end_time = time.time()
+                time_taken = round(end_time - start_time, 2)  # Time in seconds
+
+      
+# Build the formatted response
                 response = (
                     f"{verdict}\n\n"
                     f"𝗖𝗮𝗿𝗱: <code>{cc}</code>\n"
-                    f"𝐆𝐚𝐭𝐞𝐰𝐚𝐲: 3DS Lookup\n"
-                    f"𝐑𝐞𝐬𝐩𝗼𝗻𝘀𝗲: {vbv_status}\n\n"
+                    f"𝐆𝐚𝐭𝐞𝐰𝐚𝐲: 3DS Lookup\n" 
+                    f"𝐑𝐞𝐬𝐩𝐨𝐧𝐬𝐞: {vbv_status}\n\n"
+                    
                     f"𝗜𝗻𝗳𝗼: {card_type}\n"
                     f"𝐈𝐬𝐬𝐮𝐞𝐫: {bank}\n"
                     f"𝐂𝐨𝐮𝐧𝐭𝐫𝐲: {country_name} {country_flag}\n\n"
-                    f"𝗧𝗶𝗺𝗲: {elapsed} 𝘀𝗲𝗰𝗼𝗻𝗱𝘀"
+                    f"𝗧𝗶𝗺𝗲: {time_taken} 𝘀𝗲𝗰𝗼𝗻𝗱𝘀"
                 )
+
                 bot.reply_to(message, response, parse_mode="HTML")
+
             except Exception as e:
                 bot.reply_to(message, f"❌ ERROR: {e}")
+
         asyncio.run(async_vbv())
 
     threading.Thread(target=run_async).start()
-
 
 
 @bot.message_handler(func=lambda message: any(message.text.startswith(prefix) for prefix in ["/chk", ".chk"]))
