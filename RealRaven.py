@@ -479,7 +479,7 @@ def start_command(message):
         "/bin :- 𝐁𝐢𝐧 𝐋𝐨𝐨𝐤𝐮𝐩\n"
         "/gen :- 𝐆𝐞𝐧𝐞𝐫𝐚𝐭𝐞 𝐂𝐂\n"
         "/vbv :- 𝐒𝐢𝐧𝐠𝐥𝐞 𝐕𝐁𝐕\n"
-        "/ss :- 𝐓𝐚𝐤𝐞 𝐒𝐜𝐫𝐞𝐞𝐧𝐬𝐡𝐨𝐭\n"
+        "/ss :- 𝐒𝐢𝐭𝐞 𝐒𝐜𝐫𝐞𝐞𝐧𝐬𝐡𝐨𝐭\n"
         "/chk :- 𝐒𝐭𝐫𝐢𝐩𝐞 𝐀𝐮𝐭𝐡\n\n"
         "Bᴏᴛ Bʏ @Newlester "
     )
@@ -516,7 +516,7 @@ def screenshot_command(message):
             with open("ss.png", "wb") as f:
                 f.write(resp.content)
 
-            caption = f"Screenshot Successful ✅\nURL: <code>{url}</code>"
+            caption = f"Screenshot Successful ✅\nϟ URL: <code>{url}</code>"
             with open("ss.png", "rb") as photo:
                 sent_msg = bot.send_photo(message.chat.id, photo, caption=caption, parse_mode="HTML")
 
@@ -542,6 +542,42 @@ def screenshot_command(message):
                     bot.delete_message(chat_id=message.chat.id, message_id=quote_msg.message_id)
                 except ApiTelegramException:
                     pass
+                try:
+                    bot.delete_message(chat_id=message.chat.id, message_id=message.message_id)
+                except ApiTelegramException:
+                    pass
+
+            threading.Timer(30, delayed_delete).start()
+
+        else:
+            try:
+                bot.edit_message_text("Screenshot API Error! Try a different site or check URL.",
+                                      chat_id=message.chat.id,
+                                      message_id=info_msg.message_id)
+            except ApiTelegramException:
+                pass
+
+    except requests.exceptions.Timeout:
+        try:
+            bot.edit_message_text("Timeout Error: The screenshot service took too long to respond. Please try again later.",
+                                  chat_id=message.chat.id,
+                                  message_id=info_msg.message_id)
+        except ApiTelegramException:
+            pass
+    except requests.exceptions.RequestException:
+        try:
+            bot.edit_message_text("Network Error: Could not reach the screenshot service. Please check your connection or try again later.",
+                                  chat_id=message.chat.id,
+                                  message_id=info_msg.message_id)
+        except ApiTelegramException:
+            pass
+    except Exception:
+        try:
+            bot.edit_message_text("An unexpected error occurred while taking the screenshot.",
+                                  chat_id=message.chat.id,
+                                  message_id=info_msg.message_id)
+        except ApiTelegramException:
+            pass
 
             threading.Timer(15, delayed_delete).start()
 
